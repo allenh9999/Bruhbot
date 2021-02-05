@@ -1,6 +1,10 @@
 import discord
 import os
 import string
+import requests
+import json
+import time
+import random
 
 # Opens the client
 client = discord.Client()
@@ -13,19 +17,31 @@ async def on_message(message):
     return
 
   # if it's in the bruh channel
-  if message.channel.name == "bruh":
-    # check to make sure it only contains the words bruh
-    # this is not working, so I'm doing another trick
-    #lst = re.split(string.punctuation, message.content)
-    lst = "".join([" " if c in {i for i in string.punctuation} else c for c in message.content]).split()
+  if message.channel.name == "test":
+    # if the message requests a comic, give a comic
+    if message.content.lower() == "!comic":
+      await get_comic(message)
+      return
 
-    # Checks to make sure every word is bruh
-    for word in lst:
-      word = word.lower()
-      for i in word:
-        if not i in {'b', 'r', 'u', 'h'}:
-          await message.delete()
-          return
+    # check to make sure it only contains the words bruh
+    for i in message.content:
+      i = i.lower()
+      if not i in {'b', 'r', 'u', 'h'} | {j for j in string.punctuation}:
+        await message.delete()
+        return
     await message.channel.send("Bruh")
 
+
+async def get_comic(message):
+  """Gets a comic from XKCD
+
+  :param message: the message to send
+  """
+  # Special thanks to Krithik for this part
+  url = requests.get('https://xkcd.com/{0}/info.0.json'.format(random.randint(0,2419)))
+  website = url.json()
+  await message.channel.send(website["img"])
+
+
+# Run the discord bot
 client.run(os.getenv("TOKEN"))
