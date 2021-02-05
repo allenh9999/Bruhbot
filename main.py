@@ -95,4 +95,4 @@ Commands:\n\
 
 
 # Run the discord bot
-client.run("ODA3MjgwNTEzMzUzNjQ2MTUw.YB1skA.HDgd1mafR3dbpQD1vkJRV-YJK0o")
+client.run(os.getenv("TOKEN"))
