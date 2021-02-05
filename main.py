@@ -17,7 +17,7 @@ async def on_message(message):
     return
 
   # if it's in the bruh channel
-  if message.channel.name == "test":
+  if message.channel.name == "bruh":
     # if the message requests a comic, give a comic
     if message.content.lower() == "!comic":
       await get_comic(message)
@@ -26,7 +26,7 @@ async def on_message(message):
     # check to make sure it only contains the words bruh
     for i in message.content:
       i = i.lower()
-      if not i in {'b', 'r', 'u', 'h'} | {j for j in string.punctuation}:
+      if not i in {'b', 'r', 'u', 'h'} | {j for j in string.punctuation} | {' '}:
         await message.delete()
         return
     await message.channel.send("Bruh")
