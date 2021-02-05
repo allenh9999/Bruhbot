@@ -21,9 +21,11 @@ async def on_message(message):
 
     # Checks to make sure every word is bruh
     for word in lst:
-      if word.lower() != "bruh":
-        await message.delete()
-        return
+      word = word.lower()
+      for i in word:
+        if not i in {'b', 'r', 'u', 'h'}:
+          await message.delete()
+          return
     await message.channel.send("Bruh")
 
 client.run(os.getenv("TOKEN"))
