@@ -27,6 +27,10 @@ async def on_message(message):
       await get_joke(message)
       return
 
+    if message.content.lower() == "!meme":
+      await get_meme(message)
+      return
+
     if message.content.lower() == "!help":
       await get_help(message)
       return
@@ -85,13 +89,45 @@ async def get_joke(message):
       return
 
 
+async def get_meme(message):
+  """
+  Gets a joke from reddit.com/r/memes
+
+  :param message: the message sent
+  """
+  # Get the website
+  headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36\
+    (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36'}
+  url = requests.get('https://www.reddit.com/r/memes/.json', headers=headers)
+  website = url.json()
+  sum_allowed = 0
+  for i in website['data']['children']:
+    if not i['data']['over_18'] and 'post_hint' in i['data'] and i['data']['post_hint'] == 'image':
+      sum_allowed += 1
+
+  # If there are over 2 allowed posts, continue
+  if sum_allowed <= 2:
+    await message.channel.send("Sorry, but I cannot find a good meme right now")
+    return
+
+  # Hacked do-while loop
+  while True:
+    post = website['data']['children'][random.randint(2,24)]['data']
+    if not post['over_18'] and 'post_hint' in post and post['post_hint'] == 'image':
+      post_str = post['title']
+      content_str = post['preview']['images'][0]['resolutions'][-1]['url'].replace('&amp;','&')
+      await message.channel.send(post_str + '\n' + content_str)
+      return
+
+
 async def get_help(message):
   # Print the help message
   await message.channel.send("Hi! I'm a bot that allows only combinations of b,r,u,h in the #bruh channel.\n\
 Commands:\n\
       !help (shows this text)\n\
       !joke (gets a joke from r/dadjokes)\n\
-      !comic (gets a random comic from xkcd)")
+      !comic (gets a random comic from xkcd)\n\
+      !meme (gets a meme from r/memes)")
 
 
 # Run the discord bot
