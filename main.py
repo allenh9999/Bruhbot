@@ -60,6 +60,8 @@ async def on_message(message):
 
 @client.event
 async def on_message_edit(before, after):
+    if before.author == client.user:
+        return
     if before.channel.name == channel:
         await before.channel.send("Don't abuse me:cry:")
         await after.delete()
